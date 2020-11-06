@@ -1,4 +1,7 @@
+const axios = require('axios')
+const bodyParser = require('body-parser')
 const path = require('path');//引入path模块
+
 function resolve(dir){
     return path.join(__dirname,dir)//path.join(__dirname)设置绝对路径
 }
@@ -11,5 +14,25 @@ module.exports={
         .set('common',resolve('./src/common'))
         .set('components',resolve('./src/components'))
         //set第一个参数：设置的别名，第二个参数：设置的路径
+    },
+    devServer: {
+        before(app) {
+            app.use(bodyParser.urlencoded({extended: true}))
+    
+            app.get('/api/getDiscList', function (req, res) {
+                const url = 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg'
+                axios.get(url, {
+                    headers: {
+                    referer: 'https://c.y.qq.com/',
+                    host: 'c.y.qq.com'
+                    },
+                    params: req.query
+                }).then((response) => {
+                    res.json(response.data)
+                }).catch((e) => {
+                    console.log(e)
+                })
+            })
+        }
     }
 }
