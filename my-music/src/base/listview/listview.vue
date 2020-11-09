@@ -7,7 +7,7 @@
       <li v-for="group in data" class="list-group" ref="listGroup" :key="group.title">
         <h2 class="list-group-title">{{group.title}}</h2>
         <ul>
-          <li v-for="item in group.items" class="list-group-item" :key="item.name">
+          <li v-for="item in group.items" @click="selectItem(item)" class="list-group-item" :key="item.name">
             <img v-lazy="item.avatar" class="avatar"/>
             <span class="name">{{item.name}}</span>
           </li>
@@ -57,6 +57,9 @@
       }
     },
     methods:{
+      selectItem(item) {
+        this.$emit('select', item)
+      },
       // scroll组件派发的事件，能够获取到当前滚动的位置
       scroll(pos) {
         this.scrollY = pos.y
