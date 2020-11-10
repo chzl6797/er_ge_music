@@ -7,7 +7,7 @@
 <script>
   import MusicList from 'components/music-list/MusicList.vue'
   import {getSingerDetail} from 'api/singer.js'
-  import {createSong} from 'common/js/song.js'
+  import {createSong, processSongsUrl} from 'common/js/song.js'
   import {mapGetters} from 'vuex'
 
   export default {
@@ -41,8 +41,9 @@
           return
         }
         const res = await getSingerDetail(this.singer.id)
-        this.songs = this._normalizeSongs(res.data.list)
-        console.log(this.songs)
+        processSongsUrl(this._normalizeSongs(res.data.list)).then((songs) => {
+              this.songs = songs
+            })
       },
       _normalizeSongs(list) {
         let ret = []

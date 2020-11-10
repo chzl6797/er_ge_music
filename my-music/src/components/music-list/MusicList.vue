@@ -19,7 +19,7 @@
     <scroll :data="songs" @scroll="scroll" :listen-scroll="listenScroll" :probe-type="probeType" class="list" ref="list">
       <div class="song-list-wrapper">
         <!-- 派发的select事件 -->
-        <song-list :songs="songs" :rank="rank"></song-list>
+        <song-list :songs="songs" :rank="rank" @select="selectItem"></song-list>
       </div>
     </scroll>
   </div>
@@ -29,6 +29,7 @@
 <script>
   import Scroll from 'base/scroll/scroll'
   import SongList from 'base/song-list/song-list.vue'
+  import {mapActions} from 'vuex'
 
   const RESERVED_HEIGHT = 40
 
@@ -70,7 +71,17 @@ export default {
     },
     scroll(scrollY) {
       this.scrollY = scrollY
-    }
+    },
+    selectItem(item, index) {
+      this.selectPlay({
+        list: this.songs,
+        index
+      })
+      console.log(item, index)
+    },
+    ...mapActions([
+      'selectPlay'
+    ])
   },
   mounted() {
     // 记录一下歌手图片的高度，263
