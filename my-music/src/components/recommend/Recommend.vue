@@ -1,13 +1,88 @@
 <template>
-  <div>
-    Recommend
+  <div class="recommend" ref="recommend">
+    <!-- 在这一层做引用，初始化BScroll，数据加载后在渲染，要记得加上data -->
+    <scroll ref="scroll" class="recommend-content" :data="discList">
+      <div>
+        <!-- 从服务端加载数据，会有延迟，等抓到数据后，在加载slider组件，这样slider里的mounted周期就能拿到数据了 -->
+        <div class="slider-wrapper" v-if="banners.length">
+          <slider>
+            <!-- slider组件里面的插槽 -->
+            <div v-for="(item, index) in banners" :key="index">
+              <a href="/">
+                <img @load="loadImg" :src="item.pic" class="needsclick" alt="">
+              </a>
+            </div>
+          </slider>
+        </div>
+        <div class="recommend-list">
+          <h1 class="list-title">热门歌单推荐</h1>
+          <ul>
+            <li v-for="(item,index) in discList" class="item" :key="index">
+              <div class="icon">
+                <img v-lazy="item.imgurl" width="60" height="60">
+              </div>
+              <div class="text">
+                <h2 class="name" v-html="item.creator.name"></h2>
+                <p class="desc" v-html="item.dissname"></p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </scroll>
   </div>
 </template>
 
 <script>
-export default {
+  import Scroll from 'base/scroll/scroll'
+  import Slider from 'base/slider/slider'
+  import {getDiscList, getRecommend} from 'api/recommend'
 
-}
+  export default {
+    data() {
+      return {
+        banners: [],
+        discList: []
+      }
+    },
+    components: {
+      Scroll,
+      Slider
+    },
+    created() {
+      this._getRecommed()
+      this._getDiscList()
+    },
+    methods:{
+      async _getRecommed() {
+        try {
+          const {data} = await getRecommend()
+          this.banners = data.focus,
+          console.log(this.banners)
+        } catch (error) {
+          console.log(error)
+        }
+      },
+      /**
+     * 监听到banner图加载后，重新计算scrool的高度
+     */
+    loadImg() {
+      // 一张图片渲染就行了
+      if (!this.checkLoaded) {
+        this.$refs.scroll.refresh()
+        this.checkLoaded = true
+      }
+    },
+      async _getDiscList() {
+        try {
+          const {data} = await getDiscList()
+          this.discList = data.list
+        } catch (error) {
+          console.log(error)
+        }
+      }
+    }
+  }
 </script>
 
 

@@ -3,13 +3,18 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import fastclick from 'fastclick'
+import VueLazyload from 'vue-lazyload'
 
 // 入口文件引入公共样式
 import 'common/stylus/index.styl'
 
 // 整个PC所有body下的dom点击都不会有300毫秒延迟
 fastclick.attach(document.body)
- 
+
+Vue.use(VueLazyload,{
+  loading: require('common/image/default.png')
+})
+
 Vue.config.productionTip = false
 
 new Vue({
